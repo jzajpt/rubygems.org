@@ -328,6 +328,10 @@ class Version < ApplicationRecord
     Links::LINKS.any? { |_, long| metadata.key? long }
   end
 
+  def rubygems_mfa_required?
+    metadata.key? "rubygems_mfa_required"
+  end
+
   def yanker
     Deletion.find_by(rubygem: rubygem.name, number: number, platform: platform)&.user unless indexed
   end

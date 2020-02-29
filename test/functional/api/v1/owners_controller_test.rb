@@ -136,6 +136,31 @@ class Api::V1::OwnersControllerTest < ActionController::TestCase
         assert @rubygem.owners.include?(@third_user)
       end
     end
+
+    context "when rubygems mfa is required" do
+      setup do
+        metadata = { "rubygems_mfa_required" => "true" }
+        create(:version, rubygem: @rubygem, number: "1.0.0", metadata: metadata)
+      end
+
+      context "when other user has not enabled MFA" do
+        setup do
+          @second_user.enable_mfa!(ROTP::Base32.random_base32, :ui_and_api)
+        end
+
+        should "add other user as gem owner" do
+          post :create, params: { rubygem_id: @rubygem.to_param, email: @second_user.email }, format: :json
+          assert @rubygem.owners.include?(@second_user)
+        end
+      end
+
+      context "when other user has not enabled MFA" do
+        should "refuse to add other user as gem owner" do
+          post :create, params: { rubygem_id: @rubygem.to_param, email: @second_user.email }, format: :json
+          refute @rubygem.owners.include?(@second_user)
+        end
+      end
+    end
   end
 
   should "route DELETE" do
