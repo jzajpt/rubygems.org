@@ -177,7 +177,7 @@ class Api::V1::OwnersControllerTest < ActionController::TestCase
           post :create, params: { rubygem_id: @rubygem.to_param, email: @second_user.email }, format: :json
         end
 
-        should respond_with :unauthorized
+        should respond_with :forbidden
         should "refuse to add other user as gem owner" do
           refute @rubygem.owners.include?(@second_user)
         end
@@ -271,7 +271,7 @@ class Api::V1::OwnersControllerTest < ActionController::TestCase
           delete :destroy, params: { rubygem_id: @rubygem.to_param, email: @second_user.email, format: :json }
         end
 
-        should respond_with :unauthorized
+        should respond_with :forbidden
         should "fail to remove gem owner" do
           assert @rubygem.owners.include?(@second_user)
         end

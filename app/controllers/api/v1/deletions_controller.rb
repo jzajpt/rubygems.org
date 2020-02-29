@@ -3,6 +3,7 @@ class Api::V1::DeletionsController < Api::BaseController
   before_action :find_rubygem_by_name
   before_action :validate_gem_and_version
   before_action :verify_with_otp
+  before_action :verify_mfa_requirement
 
   def create
     @deletion = @api_user.deletions.build(version: @version)
@@ -39,5 +40,10 @@ class Api::V1::DeletionsController < Api::BaseController
                status: :not_found
       end
     end
+  end
+
+  def verify_mfa_requirement
+    return if (@rubygem.mfa_required? && @api_user.mfa_enabled?) || !@rubygem.mfa_required?
+    render plain: "Gem requires MFA enabled; You do not have MFA enabled yet.", status: :forbidden
   end
 end

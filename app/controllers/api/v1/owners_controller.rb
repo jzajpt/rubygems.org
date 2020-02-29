@@ -62,7 +62,7 @@ class Api::V1::OwnersController < Api::BaseController
 
   def verify_mfa_requirement
     return if (mfa_required? && @api_user.mfa_enabled?) || !mfa_required?
-    render plain: "Gem requires MFA enabled; You do not have MFA enabled yet.", status: :unauthorized
+    render plain: "Gem requires MFA enabled; You do not have MFA enabled yet.", status: :forbidden
   end
 
   def mfa_required?
