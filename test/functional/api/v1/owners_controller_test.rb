@@ -137,26 +137,48 @@ class Api::V1::OwnersControllerTest < ActionController::TestCase
       end
     end
 
-    context "when rubygems mfa is required" do
+    context "when mfa is required by gem version" do
       setup do
         metadata = { "rubygems_mfa_required" => "true" }
         create(:version, rubygem: @rubygem, number: "1.0.0", metadata: metadata)
       end
 
-      context "when other user has not enabled MFA" do
+      context "api user has enabled mfa" do
         setup do
-          @second_user.enable_mfa!(ROTP::Base32.random_base32, :ui_and_api)
+          @user.enable_mfa!(ROTP::Base32.random_base32, :ui_and_api)
+          @request.env["HTTP_OTP"] = ROTP::TOTP.new(@user.mfa_seed).now
         end
 
-        should "add other user as gem owner" do
-          post :create, params: { rubygem_id: @rubygem.to_param, email: @second_user.email }, format: :json
-          assert @rubygem.owners.include?(@second_user)
+        context "when other user has enabled MFA" do
+          setup do
+            @second_user.enable_mfa!(ROTP::Base32.random_base32, :ui_and_api)
+          end
+
+          should "add other user as gem owner" do
+            post :create, params: { rubygem_id: @rubygem.to_param, email: @second_user.email }, format: :json
+            assert @rubygem.owners.include?(@second_user)
+          end
+        end
+
+        context "when other user has not enabled MFA" do
+          setup do
+            post :create, params: { rubygem_id: @rubygem.to_param, email: @second_user.email }, format: :json
+          end
+
+          should respond_with :forbidden
+          should "refuse to add other user as gem owner" do
+            refute @rubygem.owners.include?(@second_user)
+          end
         end
       end
 
-      context "when other user has not enabled MFA" do
-        should "refuse to add other user as gem owner" do
+      context "api user has not enabled mfa" do
+        setup do
           post :create, params: { rubygem_id: @rubygem.to_param, email: @second_user.email }, format: :json
+        end
+
+        should respond_with :unauthorized
+        should "refuse to add other user as gem owner" do
           refute @rubygem.owners.include?(@second_user)
         end
       end
@@ -234,6 +256,44 @@ class Api::V1::OwnersControllerTest < ActionController::TestCase
         delete :destroy, params: { rubygem_id: @rubygem.to_param, email: @user.email, format: :json }
         assert @rubygem.owners.include?(@user)
         assert_equal "Unable to remove owner.", @response.body
+      end
+    end
+
+
+    context "when mfa is required by gem version" do
+      setup do
+        metadata = { "rubygems_mfa_required" => "true" }
+        create(:version, rubygem: @rubygem, number: "1.0.0", metadata: metadata)
+      end
+
+      context "api user hasi not enabled mfa" do
+        setup do
+          delete :destroy, params: { rubygem_id: @rubygem.to_param, email: @second_user.email, format: :json }
+        end
+
+        should respond_with :unauthorized
+        should "fail to remove gem owner" do
+          assert @rubygem.owners.include?(@second_user)
+        end
+      end
+
+      context "api user has enabled mfa" do
+        setup do
+          @user.enable_mfa!(ROTP::Base32.random_base32, :ui_and_api)
+          @request.env["HTTP_OTP"] = ROTP::TOTP.new(@user.mfa_seed).now
+        end
+
+        context "on delete to remove gem owner with correct OTP" do
+          setup do
+            @request.env["HTTP_OTP"] = ROTP::TOTP.new(@user.mfa_seed).now
+            delete :destroy, params: { rubygem_id: @rubygem.to_param, email: @second_user.email, format: :json }
+          end
+
+          should respond_with :success
+          should "succeed to remove gem owner" do
+            refute @rubygem.owners.include?(@second_user)
+          end
+        end
       end
     end
   end

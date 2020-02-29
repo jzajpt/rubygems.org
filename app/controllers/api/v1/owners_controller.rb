@@ -2,6 +2,7 @@ class Api::V1::OwnersController < Api::BaseController
   before_action :authenticate_with_api_key, except: %i[show gems]
   before_action :find_rubygem, except: :gems
   before_action :verify_gem_ownership, except: %i[show gems]
+  before_action :verify_mfa_requirement, only: %i[create destroy]
   before_action :verify_with_otp, only: %i[create destroy]
 
   def show
@@ -59,8 +60,12 @@ class Api::V1::OwnersController < Api::BaseController
     render plain: "You do not have permission to manage this gem.", status: :unauthorized
   end
 
-  def mfa_required?
-    @rubygem.versions.last&.rubygems_mfa_required?
+  def verify_mfa_requirement
+    return if (mfa_required? && @api_user.mfa_enabled?) || !mfa_required?
+    render plain: "Gem requires MFA enabled; You do not have MFA enabled yet.", status: :unauthorized
   end
 
+  def mfa_required?
+    @rubygem.mfa_required?
+  end
 end

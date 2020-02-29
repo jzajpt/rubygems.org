@@ -688,6 +688,12 @@ class VersionTest < ActiveSupport::TestCase
     end
   end
 
+  context "with rubygems_mfa_required metadata" do
+    setup do
+    end
+  end
+
+
   context "indexes" do
     setup do
       @first_rubygem  = create(:rubygem, name: "first")
