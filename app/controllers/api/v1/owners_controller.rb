@@ -14,13 +14,11 @@ class Api::V1::OwnersController < Api::BaseController
 
   def create
     owner = User.find_by_name(params[:email])
-    if owner
-      if (@rubygem.mfa_required? && owner.mfa_enabled?) || !@rubygem.mfa_required?
-        @rubygem.ownerships.create(user: owner)
-        render plain: "Owner added successfully."
-      else
-        render plain: "Owner could not be added; gem requires MFA enabled for each owner.", status: :forbidden
-      end
+    if owner && @rubygem.mfa_requirement_satisfied_for?(owner)
+      @rubygem.ownerships.create(user: owner)
+      render plain: "Owner added successfully."
+    elsif owner
+      render plain: "Owner could not be added; gem requires MFA enabled for each owner.", status: :forbidden
     else
       render plain: "Owner could not be found.", status: :not_found
     end

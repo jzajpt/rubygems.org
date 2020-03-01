@@ -21,8 +21,7 @@ class Pusher
   end
 
   def check_mfa_requirement
-    (rubygem.mfa_required? && user.mfa_enabled?) ||
-      !rubygem.mfa_required? ||
+    rubygem.mfa_requirement_satisfied_for?(user) ||
       notify("Rubygem requires owners to enable MFA. You must enable MFA before pushing new version.", 403)
   end
 

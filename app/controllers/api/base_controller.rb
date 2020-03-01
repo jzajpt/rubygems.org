@@ -30,7 +30,7 @@ class Api::BaseController < ApplicationController
   end
 
   def verify_mfa_requirement
-    return if (@rubygem.mfa_required? && @api_user.mfa_enabled?) || !@rubygem.mfa_required?
+    return if @rubygem.mfa_requirement_satisfied_for?(@api_user)
     render plain: "Gem requires MFA enabled; You do not have MFA enabled yet.", status: :forbidden
   end
 

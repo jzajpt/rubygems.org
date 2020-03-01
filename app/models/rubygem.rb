@@ -290,6 +290,10 @@ class Rubygem < ApplicationRecord
     versions.last&.rubygems_mfa_required?
   end
 
+  def mfa_requirement_satisfied_for?(user)
+    user.mfa_enabled? || !mfa_required?
+  end
+
   private
 
   # a gem namespace is not protected if it is
