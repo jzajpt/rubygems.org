@@ -282,6 +282,9 @@ en:
       install: install
       required_ruby_version: Required Ruby Version
       required_rubygems_version: Required Rubygems Version
+      requires_mfa: "Requires MFA Account"
+      yes: "Yes"
+      no: "No"
       links:
         badge: Badge
         bugs: Bug Tracker
