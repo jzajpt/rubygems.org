@@ -273,8 +273,8 @@ de:
       required_ruby_version: Erforderliche Ruby-Version
       required_rubygems_version:
       requires_mfa:
-      yes: Ja
-      no: Nein
+      'yes': Ja
+      'no': Nein
       links:
         badge: Abzeichen
         bugs: Bug Tracker
