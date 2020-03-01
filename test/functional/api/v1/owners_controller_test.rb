@@ -259,7 +259,6 @@ class Api::V1::OwnersControllerTest < ActionController::TestCase
       end
     end
 
-
     context "when mfa is required by gem version" do
       setup do
         metadata = { "rubygems_mfa_required" => "true" }

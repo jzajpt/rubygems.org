@@ -294,7 +294,6 @@ class PusherTest < ActiveSupport::TestCase
       Indexer.any_instance.stubs(:write_gem)
     end
 
-
     context "when cutter is saved" do
       setup do
         assert_equal true, @cutter.save
