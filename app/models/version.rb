@@ -329,7 +329,7 @@ class Version < ApplicationRecord
   end
 
   def rubygems_mfa_required?
-    metadata.key? "rubygems_mfa_required"
+    ActiveRecord::Type::Boolean.new.cast(metadata["rubygems_mfa_required"])
   end
 
   def yanker

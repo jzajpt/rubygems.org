@@ -11,7 +11,7 @@ class Pusher
   end
 
   def process
-    pull_spec && find && authorize && check_mfa_requirement && validate && save
+    pull_spec && find && authorize && verify_mfa_requirement && validate && save
   end
 
   def authorize
@@ -20,7 +20,7 @@ class Pusher
       notify("You do not have permission to push to this gem. Ask an owner to add you with: gem owner #{rubygem.name} --add #{user.email}", 403)
   end
 
-  def check_mfa_requirement
+  def verify_mfa_requirement
     rubygem.mfa_requirement_satisfied_for?(user) ||
       notify("Rubygem requires owners to enable MFA. You must enable MFA before pushing new version.", 403)
   end

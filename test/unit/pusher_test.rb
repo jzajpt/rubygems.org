@@ -30,7 +30,7 @@ class PusherTest < ActiveSupport::TestCase
         @cutter.stubs(:pull_spec).returns true
         @cutter.stubs(:find).returns true
         @cutter.stubs(:authorize).returns true
-        @cutter.stubs(:check_mfa_requirement).returns true
+        @cutter.stubs(:verify_mfa_requirement).returns true
         @cutter.stubs(:validate).returns true
         @cutter.stubs(:save)
 
@@ -41,7 +41,7 @@ class PusherTest < ActiveSupport::TestCase
         @cutter.stubs(:pull_spec).returns false
         @cutter.stubs(:find).never
         @cutter.stubs(:authorize).never
-        @cutter.stubs(:check_mfa_requirement).never
+        @cutter.stubs(:verify_mfa_requirement).never
         @cutter.stubs(:save).never
         @cutter.process
       end
@@ -50,7 +50,7 @@ class PusherTest < ActiveSupport::TestCase
         @cutter.stubs(:pull_spec).returns true
         @cutter.stubs(:find)
         @cutter.stubs(:authorize).never
-        @cutter.stubs(:check_mfa_requirement).never
+        @cutter.stubs(:verify_mfa_requirement).never
         @cutter.stubs(:save).never
 
         @cutter.process
@@ -60,7 +60,7 @@ class PusherTest < ActiveSupport::TestCase
         @cutter.stubs(:pull_spec).returns true
         @cutter.stubs(:find).returns true
         @cutter.stubs(:authorize).returns false
-        @cutter.stubs(:check_mfa_requirement).never
+        @cutter.stubs(:verify_mfa_requirement).never
         @cutter.stubs(:validate).never
         @cutter.stubs(:save).never
 
@@ -71,7 +71,7 @@ class PusherTest < ActiveSupport::TestCase
         @cutter.stubs(:pull_spec).returns true
         @cutter.stubs(:find).returns true
         @cutter.stubs(:authorize).returns true
-        @cutter.stubs(:check_mfa_requirement).returns false
+        @cutter.stubs(:verify_mfa_requirement).returns false
         @cutter.stubs(:validate).never
         @cutter.stubs(:save).never
 
@@ -82,7 +82,7 @@ class PusherTest < ActiveSupport::TestCase
         @cutter.stubs(:pull_spec).returns true
         @cutter.stubs(:find).returns true
         @cutter.stubs(:authorize).returns true
-        @cutter.stubs(:check_mfa_requirement).returns true
+        @cutter.stubs(:verify_mfa_requirement).returns true
         @cutter.stubs(:validate).returns false
         @cutter.stubs(:save).never
 
@@ -264,7 +264,7 @@ class PusherTest < ActiveSupport::TestCase
       should "be false if mfa required and user has no mfa setup" do
         metadata = { "rubygems_mfa_required" => "true" }
         create(:version, rubygem: @rubygem, number: "0.1.1", metadata: metadata)
-        refute @cutter.check_mfa_requirement
+        refute @cutter.verify_mfa_requirement
       end
 
       should "be false if not owned by user and an indexed version exists" do
