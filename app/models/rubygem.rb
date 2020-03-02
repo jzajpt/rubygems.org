@@ -287,7 +287,7 @@ class Rubygem < ApplicationRecord
   end
 
   def mfa_required?
-    versions.last&.rubygems_mfa_required?
+    (latest_version || versions.last)&.rubygems_mfa_required?
   end
 
   def mfa_requirement_satisfied_for?(user)

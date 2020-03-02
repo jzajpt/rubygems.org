@@ -257,6 +257,30 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
       end
     end
 
+
+    context "when mfa is required by rubygem version being pushed" do
+      context "On POST to create for existing gem by user without mfa" do
+        setup do
+          rubygem = create(:rubygem, name: "mfa_required")
+          create(:ownership,
+            rubygem: rubygem,
+            user: @user)
+          create(:version,
+            rubygem: rubygem,
+            number: "0.0.0",
+            updated_at: 1.year.ago,
+            created_at: 1.year.ago)
+          post :create, body: gem_file("mfa-required-1.0.0.gem").read
+        end
+        should respond_with :success
+        should "register new version" do
+          assert_equal 1, Rubygem.count
+          assert_equal 2, Rubygem.last.versions.count
+        end
+      end
+
+    end
+
     context "On POST to create for new gem" do
       setup do
         post :create, body: gem_file.read
