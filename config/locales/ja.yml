@@ -273,8 +273,7 @@ ja:
       required_ruby_version: 必要Rubyバージョン
       required_rubygems_version: 必要Gemバージョン
       requires_mfa:
-      'yes':
-      'no':
+      since: "%{version}"
       links:
         badge: バッジ
         bugs: バグトラッカー

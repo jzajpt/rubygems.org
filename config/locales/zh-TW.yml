@@ -273,8 +273,7 @@ zh-TW:
       required_ruby_version: Ruby 版本需求
       required_rubygems_version: RubyGems 版本需求
       requires_mfa:
-      'yes':
-      'no':
+      since: "%{version}"
       links:
         badge: 徽章
         bugs: Bug 追蹤

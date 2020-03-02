@@ -257,7 +257,6 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
       end
     end
 
-
     context "when mfa is required by rubygem version being pushed" do
       context "On POST to create for existing gem by user without mfa" do
         setup do

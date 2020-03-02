@@ -272,9 +272,8 @@ de:
       install: installieren
       required_ruby_version: Erforderliche Ruby-Version
       required_rubygems_version:
-      requires_mfa:
-      'yes': Ja
-      'no': Nein
+      requires_mfa: Requires MFA accounts
+      since: "%{version}"
       links:
         badge: Abzeichen
         bugs: Bug Tracker

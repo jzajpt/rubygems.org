@@ -273,8 +273,7 @@ fr:
       required_ruby_version: Version de Ruby requise
       required_rubygems_version:
       requires_mfa:
-      'yes':
-      'no':
+      since: "%{version}"
       links:
         badge: Badge
         bugs: Suivi de bugs

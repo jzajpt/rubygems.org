@@ -294,6 +294,10 @@ class Rubygem < ApplicationRecord
     user.mfa_enabled? || !mfa_required?
   end
 
+  def mfa_required_since_version
+    public_versions.find(&:rubygems_mfa_required?)&.number
+  end
+
   private
 
   # a gem namespace is not protected if it is
