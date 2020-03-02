@@ -278,7 +278,6 @@ class Api::V1::RubygemsControllerTest < ActionController::TestCase
           assert_equal 2, Rubygem.last.versions.count
         end
       end
-
     end
 
     context "On POST to create for new gem" do
