@@ -295,7 +295,13 @@ class Rubygem < ApplicationRecord
   end
 
   def mfa_required_since_version
-    public_versions.find(&:rubygems_mfa_required?)&.number
+    return unless mfa_required?
+    non_mfa_version = public_versions.find { |v| !v.rubygems_mfa_required? }
+    if non_mfa_version
+      non_mfa_version.next.number
+    else
+      public_versions.last.number
+    end
   end
 
   private
